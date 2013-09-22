@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test index</title>
+    <script src="hash_to_tree.js" type="text/javascript"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+    var data1 = [
+        {key: '1', name: 'name'},
+        {key: '2', name: 'name2', parent: '1'}
+    ];
+    var tree1 = new Tree(data1);
+    console.log(tree1.inspect());
+    var record = tree2.find(1);
+</script>
+<script type="text/javascript">
+    var data2 = {1: {name: 'name'}, 2: {name: 'name2', parent: 1}};
+    var tree2 = new Tree(data2);
+    console.log(tree2.inspect());
+    var record = tree2.find(1);
+    var roots = tree2.roots();
+    var root = tree2.root();
+</script>
+</body>
+</html>
