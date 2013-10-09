@@ -66,6 +66,7 @@ var Default = (function () {
         var fields = this.constructor.prototype;
         fields['default'] = fields['default'] || console.log('default') || this;
     };
+    new constructor(arguments);// init
     return {
         new: function () {
             return new constructor(arguments);
