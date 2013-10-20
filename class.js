@@ -43,8 +43,8 @@ var Klass = (function () {
         return inner_state || this.default.state();
     };
 
-    var fields = this.constructor.prototype;
-    fields['default'] = fields['default'] || console.log('default') || this;
+    var attr_reader = this.constructor.prototype;
+    attr_reader['default'] = attr_reader['default'] || console.log('default') || this;
 };
 
 var OtherDefault = (function () {
@@ -86,3 +86,33 @@ var SingletonClass = (function () {
         }
     };
 })();
+
+
+
+
+
+var attr_reader = function (attr) {
+//        this[attr] = new Function('_'+attr,'return ' + attr + '= _' + attr + '||' + attr);
+    this[attr] = function (_argument) {
+        return eval(attr) || _argument;
+    }
+
+};
+
+/**
+ * attr({a:300,
+ *       b:[200,function(){
+ *
+ *       }]
+ * },'hello','world')
+ * @param attr
+ */
+var attr = function (attr) {
+    console.log(attr);
+    this[attr] = new Function('var ' + attr + ';return function(_'+attr+'){return ' + attr + ' = ' + attr + ' || _'+attr +'}')();
+};
+var klass = function () {
+    this.attr('h');
+};
+klass.prototype.attr = attr;
+klass.prototype = extend(klass.prototype,define_helper)
