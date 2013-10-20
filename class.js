@@ -5,7 +5,7 @@ var Klass = (function () {
     };
 
     var constructor = function () {
-        console.log(arguments);
+//        console.log(arguments);
         var private_instance_field = 'private_instance_field';
         var private_method = function () {//会创建多次，意义不大，不如用类的私有方法
             return private_instance_field;
@@ -13,8 +13,8 @@ var Klass = (function () {
 
         this.public_instance_field = 'public_instance_field';
         this.public_instance_method = function () {//每创建一个实例会创建一个函数
-            console.log(private_method());
-            console.log(this.protected_instance_method());
+//            console.log(private_method());
+//            console.log(this.protected_instance_method());
             return private_instance_field;
         }
 
@@ -38,22 +38,22 @@ var Klass = (function () {
 })();
 
 /*var Default = function (state) {
-    var inner_state = state;
-    this.state = function () {
-        return inner_state || this.default.state();
-    };
+ var inner_state = state;
+ this.state = function () {
+ return inner_state || this.default.state();
+ };
 
-    var attr_reader = this.constructor.prototype;
-    attr_reader['default'] = attr_reader['default'] || console.log('default') || this;
-};
+ var attr_reader = this.constructor.prototype;
+ attr_reader['default'] = attr_reader['default'] || console.log('default') || this;
+ };
 
-var OtherDefault = (function () {
-    return {
-        new: function () {
-            return new Default(arguments);
-        }
-    };
-})();*/
+ var OtherDefault = (function () {
+ return {
+ new: function () {
+ return new Default(arguments);
+ }
+ };
+ })();*/
 
 //带有内部状态的Default系统
 var Default = (function () {
@@ -64,7 +64,7 @@ var Default = (function () {
         };
 
         var fields = this.constructor.prototype;
-        fields['default'] = fields['default'] || console.log('default') || this;
+        fields['default'] = fields['default'] || this;// console.log('default') ||
     };
     new constructor(arguments);// init
     return {
@@ -88,31 +88,45 @@ var SingletonClass = (function () {
 })();
 
 
-
-
-
-var attr_reader = function (attr) {
-//        this[attr] = new Function('_'+attr,'return ' + attr + '= _' + attr + '||' + attr);
-    this[attr] = function (_argument) {
-        return eval(attr) || _argument;
-    }
-
-};
-
 /**
- * attr({a:300,
- *       b:[200,function(){
- *
- *       }]
- * },'hello','world')
- * @param attr
+ * 定义类的实用方法
+ * 添加new方法
+ * 为实例添加attr方法
  */
-var attr = function (attr) {
-    console.log(attr);
-    this[attr] = new Function('var ' + attr + ';return function(_'+attr+'){return ' + attr + ' = ' + attr + ' || _'+attr +'}')();
-};
-var klass = function () {
-    this.attr('h');
-};
-klass.prototype.attr = attr;
-klass.prototype = extend(klass.prototype,define_helper)
+var define_class = (function () {
+    /**
+     * TODO 创建大量拥有大量属性的对象是的性能问题
+     * attr({a:300, b:200 },'hello','world')
+     * @param attr
+     */
+    var _attr = function () {
+        for (var i = 0, len = arguments.length; i < len; i++) {
+            var attr = arguments[i];
+            if (attr.constructor === Object) {
+                for (var a in attr) {
+                    this.attr(a);
+                    this[a](attr[a]);
+                }
+            } else if (attr.constructor === Array) {
+                for (var e = 0, l = attr.length; e < l; e++) {
+                    this.attr(attr[e]);
+                }
+            } else if (attr.constructor === String) {
+                this[attr] = new Function('var ' + attr + ';return function(_' + attr + '){return ' + attr + ' = _' + attr + ' || ' + attr + '}')();
+            } else {
+                throw new Error('error');
+            }
+        }
+    };
+    return function (func) {
+        if (typeof func === 'function') {
+            func.prototype.attr = _attr;
+            func.new = function () {
+                return new func();
+            };
+        } else {
+            throw new Error('');
+        }
+        return func;
+    };
+})();
