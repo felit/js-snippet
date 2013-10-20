@@ -89,13 +89,21 @@ var SingletonClass = (function () {
 
 
 /**
+ * TODO 添加过滤器功能
  * 定义类的实用方法
  * 添加new方法
  * 为实例添加attr方法
+ * Klass = define_class(function(){
+ *    this.attr({name:'class_name'});
+ * });
+ *
+ * Klass.new().name()-->class_name
+ *
  */
 var define_class = (function () {
     /**
      * TODO 创建大量拥有大量属性的对象是的性能问题
+     *
      * attr({a:300, b:200 },'hello','world')
      * @param attr
      */
