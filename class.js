@@ -91,13 +91,16 @@ var SingletonClass = (function () {
 /**
  * TODO 添加过滤器功能
  * 定义类的实用方法
- * 添加new方法
+ * 添加create方法,new 方法不与IE兼容
  * 为实例添加attr方法
  * Klass = define_class(function(){
  *    this.attr({name:'class_name'});
+ *    this.attr({attr1:400})
  * });
  *
- * Klass.new().name()-->class_name
+ * var ins = Klass.create()
+ * ins.name()-->class_name
+ * ins.attr1()-->400
  *
  */
 var define_class = (function () {
@@ -105,9 +108,10 @@ var define_class = (function () {
      * TODO 创建大量拥有大量属性的对象是的性能问题
      *
      * attr({a:300, b:200 },'hello','world')
+     *
      * @param attr
      */
-    var _attr = function () {
+    var attr_accessor = function () {
         for (var i = 0, len = arguments.length; i < len; i++) {
             var attr = arguments[i];
             if (attr.constructor === Object) {
@@ -120,17 +124,32 @@ var define_class = (function () {
                     this.attr(attr[e]);
                 }
             } else if (attr.constructor === String) {
-                this[attr] = new Function('var ' + attr + ';return function(_' + attr + '){return ' + attr + ' = _' + attr + ' || ' + attr + '}')();
+                this[attr] = (function () {
+                    var inner_attr;
+                    return function (_attr) {
+                        return inner_attr = _attr === undefined ? inner_attr : _attr;
+                    };
+                })();
             } else {
                 throw new Error('error');
             }
         }
     };
+    var attr_reader = function (attributes) {
+        for (var attr in attributes) {
+            this[attr] = (function (inner_attr) {
+                return function () {
+                    return inner_attr;
+                };
+            })(attributes[attr]);
+        }
+    };
     return function (func) {
         if (typeof func === 'function') {
-            func.prototype.attr = _attr;
-            func.new = function () {
-                return new func();
+            func.prototype.attr = attr_accessor;
+            func.prototype.attr_reader = attr_reader;
+            func.create = function (a1,a2,a3,a4,a5,a6,a7,a8,a9,a10) {//TODO 最多十个参数
+                return new func(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10);
             };
         } else {
             throw new Error('');
