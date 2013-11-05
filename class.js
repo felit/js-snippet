@@ -146,7 +146,7 @@ var define_class = (function () {
     };
 
     /**
-     *
+     * 属性代理功能，但代理后为方法，以用于即时更新
      * this.attr_delegate('street','landline',address)
      * this.street()
      * address.landline='13287654321'
@@ -174,12 +174,19 @@ var define_class = (function () {
                 }
             })(attr);
         }
-    }
+    };
+
+    var prototype_extend = function (object) {
+        for(var elem in object){
+            this.prototype[elem] = object[elem];
+        }
+    };
     return function (func) {
         if (typeof func === 'function') {
             func.prototype.attr = attr_accessor;
             func.prototype.attr_reader = attr_reader;
             func.prototype.attr_delegate = attr_delegate;
+            func.prototype_extend = prototype_extend;
             func.create = function (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) {//TODO 最多十个参数
                 return new func(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
             };

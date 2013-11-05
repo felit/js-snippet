@@ -70,3 +70,12 @@ test('defined_class attr_delegate', function () {
     var user = User.create(address);
     ok(address.street() == user.street(),'successful');
 });
+
+test('defined_class prototype_extend', function () {
+    var User = define_class(function () {
+
+    });
+    User.prototype_extend({hello: 'world'});
+    var user = User.create();
+    ok(user.hello == 'world', 'prototype successful');
+});
