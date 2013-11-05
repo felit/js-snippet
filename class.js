@@ -145,7 +145,13 @@ var define_class = (function () {
         }
     };
 
+
     /**
+     * TODO 改写attr_delegate
+     * this.attr_delegate(attributes, this.tree(),function(){
+     *    return this.key();
+     * });
+     * TODO 添加参数计算
      * 属性代理功能，但代理后为方法，以用于即时更新
      * this.attr_delegate('street','landline',address)
      * this.street()
@@ -181,6 +187,7 @@ var define_class = (function () {
             this.prototype[elem] = object[elem];
         }
     };
+
     return function (func) {
         if (typeof func === 'function') {
             func.prototype.attr = attr_accessor;
