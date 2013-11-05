@@ -144,12 +144,44 @@ var define_class = (function () {
             })(attributes[attr]);
         }
     };
+
+    /**
+     *
+     * this.attr_delegate('street','landline',address)
+     * this.street()
+     * address.landline='13287654321'
+     * this.landline(); //->13287654321
+     * @param attributes
+     * @param object
+     */
+    var attr_delegate = function () {
+        var object = arguments[arguments.length - 1];
+        var attributes = [];
+        for (var e = 0, l = arguments.length - 1; e < l; e++) {
+            attributes.push(arguments[e]);
+        }
+        for (var i = 0, len = attributes.length, attr; i < len; i++) {
+            attr = object[attributes[i]];
+            this[attributes[i]] = (function (attr) {
+                if (typeof attr === 'function') {
+                    return function () {
+                        return attr.apply(object, arguments);
+                    }
+                } else {
+                    return this[attributes[i]] = function () {
+                        return attr;
+                    };
+                }
+            })(attr);
+        }
+    }
     return function (func) {
         if (typeof func === 'function') {
             func.prototype.attr = attr_accessor;
             func.prototype.attr_reader = attr_reader;
-            func.create = function (a1,a2,a3,a4,a5,a6,a7,a8,a9,a10) {//TODO 最多十个参数
-                return new func(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10);
+            func.prototype.attr_delegate = attr_delegate;
+            func.create = function (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) {//TODO 最多十个参数
+                return new func(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
             };
         } else {
             throw new Error('');
