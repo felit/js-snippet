@@ -1,3 +1,4 @@
+module('define_class');
 test('define_class',function(){
     var klass = define_class(function(){
         this.attr({a:1,b:[1,2,3,4],c:true},'attr1',['attr2','attr3']);
