@@ -9,6 +9,7 @@
             //TODO 键盘时间
             //TODO JSON 回调
             //TODO 延时处理
+            //TODO 鼠标事件 选中事件
             //TODO 分可编辑与不可编辑
             this.fields = function () {
                 return fields;
